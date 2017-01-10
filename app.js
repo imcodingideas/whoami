@@ -7,12 +7,17 @@ var app = express();
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 
 app.get('/', function (req, res) {
-  res.send('hello');
+
+  res.json({
+    ipaddress: req.headers['x-forwarded-for'] || req.headers.host,
+    language: req.headers['accept-language'].split(',')[0],
+    software: req.headers['user-agent'].match(/\((.*?)\)/)[1]
+  });
+
 });
 
 app.listen('3000', function () {
